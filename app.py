@@ -1,6 +1,8 @@
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
+import sys
+print(sys.path)
 
 import json
 import dateutil.parser
@@ -8,6 +10,7 @@ import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from config import Config
 import logging
 import os
@@ -21,12 +24,18 @@ from forms import *
 # App Config.
 #----------------------------------------------------------------------------#
 
+print("initialise falsk app")
 app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
+app.config.from_object(Config)
 
+
+print("Initialise extensions")
+moment = Moment(app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+print("Extensions initialised")
 # TODO: connect to a local postgresql database
+# this is in the config file?
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -534,7 +543,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 # Or specify port manually:
 '''
