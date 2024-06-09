@@ -8,7 +8,9 @@ import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from config import Config
 import logging
+import os
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from hmac import compare_digest as safe_str_cmp
@@ -41,8 +43,10 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    # TODO: implement any missing fields, as a database migration using
+    # Flask-Migrate
+    shows = db.relationship('Show', backref='venue', lazy=True)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -55,10 +59,24 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    needs_talent = db.Column(db.Boolean, default=False)
+    needs_venue = db.Column(db.Boolean, default=False)
+    # TODO: implement any missing fields, as a database migration using
+    # Flask-Migrate
+    shows = db.relationship('Show', backref='artist', lazy=True)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+
+class Show(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    start_time = db.Column(db.DateTime, nullable=False)
+
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
+
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+
 
 
 #----------------------------------------------------------------------------#
