@@ -42,7 +42,10 @@ print("Extensions initialised")
 # Models.
 #----------------------------------------------------------------------------#
 
+
 class Venue(db.Model):
+    # TODO: implement any missing fields, as a database migration using - DONE
+    # Flask-Migrate
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -53,12 +56,14 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    # TODO: implement any missing fields, as a database migration using - DONE
-    # Flask-Migrate
+    needs_talent = db.Column(db.Boolean, default=False)
+
     shows = db.relationship('Show', backref='venue', lazy=True)
 
 
 class Artist(db.Model):
+    # TODO: implement any missing fields, as a database migration using - DONE
+    # Flask-Migrate
     __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -69,10 +74,8 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    needs_talent = db.Column(db.Boolean, default=False)
     needs_venue = db.Column(db.Boolean, default=False)
-    # TODO: implement any missing fields, as a database migration using - DONE
-    # Flask-Migrate
+
     shows = db.relationship('Show', backref='artist', lazy=True)
 
 
@@ -155,7 +158,7 @@ def search_venues():
     # is case-insensitive.
     # seach for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live
-    # Music & Coffee"
+    # Music & Coffee" - DONE
     search_term = request.form.get('search_term', '')
     search = "%{}".format(search_term)
     results = Venue.query.filter(Venue.name.ilike(search)).all()
@@ -177,7 +180,6 @@ def search_venues():
     
     return render_template('pages/search_venues.html', results=response, 
                             search_term=search_term)
-
 
 
 @app.route('/venues/<int:venue_id>')
