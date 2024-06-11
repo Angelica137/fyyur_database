@@ -120,27 +120,31 @@ def venues():
     # TODO: replace with real venues data.
     # num_upcoming_shows should be aggregated based on number of upcoming
     # shows per venue.
-    data = [{
-      "city": "San Francisco",
-      "state": "CA",
-      "venues": [{
-        "id": 1,
-        "name": "The Musical Hop",
-        "num_upcoming_shows": 0,
-      }, {
-        "id": 3,
-        "name": "Park Square Live Music & Coffee",
-        "num_upcoming_shows": 1,
-      }]
-    }, {
-      "city": "New York",
-      "state": "NY",
-      "venues": [{
-        "id": 2,
-        "name": "The Dueling Pianos Bar",
-        "num_upcoming_shows": 0,
-      }]
-    }]
+    
+    # Query db to get all venues
+    venues = Venue.query.all()
+    
+		# create a set of unique city and state pairs
+    cities = set()
+    for venue in venues:
+        cities.add((venue.city, venue.state))
+        
+    # get data by city and state
+    data = []
+    for city, state in cities:
+        city_venues = Venue.query.filter_by(city=city, state=state).all()
+        venues_data = []
+        for venue in city_venues:
+            venues_data.append({
+                "id": venue.id,
+                "name": venue.name,
+						})
+        data.append({
+            "city": city,
+            "state": state,
+            "venues": venues_data
+				})
+        
     return render_template('pages/venues.html', areas=data)
 
 
