@@ -56,8 +56,10 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    needs_talent = db.Column(db.Boolean, default=False)
-
+    website = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_description = db.Column(db.String(500))
+    genres = db.Column(db.ARRAY(db.String))
     shows = db.relationship('Show', backref='venue', lazy=True)
 
 
@@ -74,7 +76,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    needs_venue = db.Column(db.Boolean, default=False)
+    seeking_venue = db.Column(db.Boolean, default=False)
+    seeking_description = db.Column(db.String(500))
+    website = db.Column(db.String(120))
 
     shows = db.relationship('Show', backref='artist', lazy=True)
 
@@ -178,14 +182,14 @@ def search_venues():
         "data": data
     }
     
-    return render_template('pages/search_venues.html', results=response, 
-                            search_term=search_term)
+    return render_template('pages/search_venues.html', results=response,
+                           search_term=search_term)
 
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+    # shows the venue page with the given venue_id
+    # TODO: replace with real venue data from the venues table, using venue_id
   data1 = {
     "id": 1,
     "name": "The Musical Hop",
@@ -331,6 +335,7 @@ def search_artists():
 def show_artist(artist_id):
   # shows the artist page with the given artist_id
   # TODO: replace with real artist data from the artist table, using artist_id
+
   data1={
     "id": 4,
     "name": "Guns N Petals",
