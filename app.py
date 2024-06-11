@@ -18,6 +18,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from hmac import compare_digest as safe_str_cmp
 from forms import *
+from datetime import datetime
 
 
 #----------------------------------------------------------------------------#
@@ -119,7 +120,7 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     # num_upcoming_shows should be aggregated based on number of upcoming
-    # shows per venue.
+    # shows per venue. - DONE
     
     # Query db to get all venues
     venues = Venue.query.all()
@@ -155,15 +156,28 @@ def search_venues():
     # seach for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live
     # Music & Coffee"
+    search_term = request.form.get('search_term', '')
+    search = "%{}".format(search_term)
+    results = Venue.query.filter(Venue.name.ilike(search)).all()
+    
+    data = []
+    for venue in results:
+        num_upcoming_shows = Show.query.filter(Show.venue_id == venue.id,
+                                               Show.start_time > datetime.now()).count()
+        data.append({
+            "id": venue.id,
+            "name": venue.name,
+            "num_upcoming_shows": num_upcoming_shows
+        })
+
     response = {
-      "count": 1,
-      "data": [{
-        "id": 2,
-        "name": "The Dueling Pianos Bar",
-        "num_upcoming_shows": 0,
-      }]
+        "count": len(results),
+        "data": data
     }
-    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    
+    return render_template('pages/search_venues.html', results=response, 
+                            search_term=search_term)
+
 
 
 @app.route('/venues/<int:venue_id>')
