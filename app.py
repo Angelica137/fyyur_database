@@ -34,7 +34,7 @@ moment = Moment(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 print("Extensions initialised")
-# TODO: connect to a local postgresql database
+# TODO: connect to a local postgresql database - DONE
 # this is in the config file?
 
 #----------------------------------------------------------------------------#
@@ -52,7 +52,7 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    # TODO: implement any missing fields, as a database migration using
+    # TODO: implement any missing fields, as a database migration using - DONE
     # Flask-Migrate
     shows = db.relationship('Show', backref='venue', lazy=True)
 
@@ -70,7 +70,7 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     needs_talent = db.Column(db.Boolean, default=False)
     needs_venue = db.Column(db.Boolean, default=False)
-    # TODO: implement any missing fields, as a database migration using
+    # TODO: implement any missing fields, as a database migration using - DONE
     # Flask-Migrate
     shows = db.relationship('Show', backref='artist', lazy=True)
 
@@ -83,9 +83,8 @@ class Show(db.Model):
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
 
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
-
-
+# TODO Implement Show and Artist models, and complete all model
+# relationships and properties, as a database migration. - DONE
 
 
 #----------------------------------------------------------------------------#
@@ -93,12 +92,13 @@ class Show(db.Model):
 #----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
-  date = dateutil.parser.parse(value)
-  if format == 'full':
-      format="EEEE MMMM, d, y 'at' h:mma"
-  elif format == 'medium':
-      format="EE MM, dd, y h:mma"
-  return babel.dates.format_datetime(date, format, locale='en')
+    date = dateutil.parser.parse(value)
+    if format == 'full':
+        format = "EEEE MMMM, d, y 'at' h:mma"
+    elif format == 'medium':
+        format = "EE MM, dd, y h:mma"
+    return babel.dates.format_datetime(date, format, locale='en')
+
 
 app.jinja_env.filters['datetime'] = format_datetime
 
@@ -109,7 +109,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+    return render_template('pages/home.html')
 
 
 #  Venues
@@ -117,51 +117,56 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
+    # TODO: replace with real venues data.
+    # num_upcoming_shows should be aggregated based on number of upcoming
+    # shows per venue.
+    data = [{
+      "city": "San Francisco",
+      "state": "CA",
+      "venues": [{
+        "id": 1,
+        "name": "The Musical Hop",
+        "num_upcoming_shows": 0,
+      }, {
+        "id": 3,
+        "name": "Park Square Live Music & Coffee",
+        "num_upcoming_shows": 1,
+      }]
     }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
+      "city": "New York",
+      "state": "NY",
+      "venues": [{
+        "id": 2,
+        "name": "The Dueling Pianos Bar",
+        "num_upcoming_shows": 0,
+      }]
     }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+    return render_template('pages/venues.html', areas=data)
+
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    # TODO: implement search on venues with partial string search. Ensure it
+    # is case-insensitive.
+    # seach for Hop should return "The Musical Hop".
+    # search for "Music" should return "The Musical Hop" and "Park Square Live
+    # Music & Coffee"
+    response = {
+      "count": 1,
+      "data": [{
+        "id": 2,
+        "name": "The Dueling Pianos Bar",
+        "num_upcoming_shows": 0,
+      }]
+    }
+    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
-  data1={
+  data1 = {
     "id": 1,
     "name": "The Musical Hop",
     "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
@@ -237,7 +242,7 @@ def show_venue(venue_id):
     }],
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
-  }
+    }
   data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=data)
 
