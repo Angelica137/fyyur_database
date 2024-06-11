@@ -313,7 +313,7 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-    # TODO: Complete this endpoint for taking a venue_id, and using
+    # TODO: Complete this endpoint for taking a venue_id, and using - DONE
     # SQLAlchemy ORM to delete a record. Handle cases where the session commit
     # could fail.
 
@@ -324,7 +324,8 @@ def delete_venue(venue_id):
     try:
         venue = Venue.query.get(venue_id)
         if not venue:
-            return jsonify({"success": False, "message": "Venue not found"}), 404
+            return jsonify({"success": False, "message": "Venue not found"}),
+            404
 
         db.session.delete(venue)
         db.session.commit()
@@ -344,18 +345,19 @@ def delete_venue(venue_id):
 
 @app.route('/artists')
 def artists():
-  # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
-  return render_template('pages/artists.html', artists=data)
+    # TODO: replace with real data returned from querying the database
+    artists = Artist.query.all()
+    
+    data = []
+    for artist in artists:
+        data.append({
+            "id": artist.id,
+            "name": artist.name
+        })
+
+    return render_template("pages/artists.html", artists=data)
+
+
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
