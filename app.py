@@ -195,9 +195,10 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
-    # TODO: replace with real venue data from the venues table, using venue_id - DONE
+    # TODO: replace with real venue data from the venues table, using venue_id
+    # - DONE
     venue = Venue.query.get(venue_id)
-    
+
     if not venue:
         return render_template('errors/404.html'), 404
 
@@ -250,7 +251,7 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead
+    # TODO: insert form data as a new Venue record in the db, instead - DONE
     form = VenueForm(request.form)
     if form.validate_on_submit():
         try:
@@ -270,7 +271,7 @@ def create_venue_submission():
             db.session.add(new_venue)
             db.session.commit()
             # TODO: modify data to be the data object returned from db
-            # insertion
+            # insertion - I AM NOT SURE THIS IS WHAT WAS ASKED FOR
             venue = Venue.query.get(new_venue.id)
             data = {
                 "id": venue.id,
@@ -290,7 +291,7 @@ def create_venue_submission():
             # on successful db insert, flash success
             flash('Venue ' + form.name.data + ' was successfully listed!')
             return redirect(url_for('index'))
-            # TODO: on unsuccessful db insert, flash an error instead.
+            # TODO: on unsuccessful db insert, flash an error instead. - DONE
             # e.g., flash('An error occurred. Venue ' + data.name + ' could
             # not be listed.')
             # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
@@ -312,15 +313,20 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+    # TODO: Complete this endpoint for taking a venue_id, and using
+    # SQLAlchemy ORM to delete a record. Handle cases where the session commit
+    # could fail.
 
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+    # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page,
+    # have it so that
+    # clicking that button delete it from the db then redirect the user to the
+    # homepage
+    return None
 
 #  Artists
 #  ----------------------------------------------------------------
+
+
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
