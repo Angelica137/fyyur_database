@@ -16,6 +16,7 @@ import logging
 import os
 from logging import Formatter, FileHandler
 from flask_wtf import Form
+from flask_wtf.csrf import CSRFProtect
 from hmac import compare_digest as safe_str_cmp
 from forms import *
 from datetime import datetime
@@ -35,6 +36,10 @@ moment = Moment(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 print("Extensions initialised")
+
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
+
 # TODO: connect to a local postgresql database - DONE
 # this is in the config file?
 
@@ -190,7 +195,7 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
-    # TODO: replace with real venue data from the venues table, using venue_id
+    # TODO: replace with real venue data from the venues table, using venue_id - DONE
     venue = Venue.query.get(venue_id)
     
     if not venue:
@@ -236,22 +241,74 @@ def show_venue(venue_id):
 #  Create Venue
 #  ----------------------------------------------------------------
 
+
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
-  form = VenueForm()
-  return render_template('forms/new_venue.html', form=form)
+    form = VenueForm()
+    return render_template('forms/new_venue.html', form=form)
+
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+    # TODO: insert form data as a new Venue record in the db, instead
+    form = VenueForm(request.form)
+    if form.validate_on_submit():
+        try:
+            new_venue = Venue(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                address=form.address.data,
+                phone=form.phone.data,
+                image_link=form.image_link.data,
+                facebook_link=form.facebook_link.data,
+                website=form.website_link.data,
+                seeking_talent=form.seeking_talent.data,
+                seeking_description=form.seeking_description.data,
+                genres=form.genres.data
+            )
+            db.session.add(new_venue)
+            db.session.commit()
+            # TODO: modify data to be the data object returned from db
+            # insertion
+            venue = Venue.query.get(new_venue.id)
+            data = {
+                "id": venue.id,
+                "name": venue.name,
+                "city": venue.city,
+                "state": venue.state,
+                "address": venue.address,
+                "phone": venue.phone,
+                "image_link": venue.image_link,
+                "facebook_link": venue.facebook_link,
+                "website": venue.website,
+                "seeking_talent": venue.seeking_talent,
+                "seeking_description": venue.seeking_description,
+                "genres": venue.genres
+            }
 
-  # on successful db insert, flash success
-  flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+            # on successful db insert, flash success
+            flash('Venue ' + form.name.data + ' was successfully listed!')
+            return redirect(url_for('index'))
+            # TODO: on unsuccessful db insert, flash an error instead.
+            # e.g., flash('An error occurred. Venue ' + data.name + ' could
+            # not be listed.')
+            # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Venue ' + form.name.data + ' could not \
+                  be listed.')
+            print(f'Error: {e}')
+            return render_template('forms/new_venue.html', form=form)
+        finally:
+            db.session.close()
+    else:
+        flash('An error occurred. Venue form validation failed.')
+        for field, errors in form.errors.items():
+            for error in errors:
+                print(f"Error in {getattr(form, field).label.text}: {error}")
+        return render_template('forms/new_venue.html', form=form)
+
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
