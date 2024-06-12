@@ -367,8 +367,8 @@ def search_artists():
     # Wild Sax Band".
     # search for "band" should return "The Wild Sax Band".
     form = SearchForm()
-    search_term = request.form.get("search_term", "")
-    search = "%{}".format(search_term)
+    search_term = form.search_term.data.strip()
+    search = f"%{search_term}%"  # This adds partial searching.
     results = Artist.query.filter(Artist.name.ilike(search)).all()
 
     data = []
