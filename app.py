@@ -266,7 +266,7 @@ def create_venue_submission():
                 phone=form.phone.data,
                 image_link=form.image_link.data,
                 facebook_link=form.facebook_link.data,
-                website=form.website_link.data,
+                website=form.website.data,
                 seeking_talent=form.seeking_talent.data,
                 seeking_description=form.seeking_description.data,
                 genres=form.genres.data
@@ -307,11 +307,9 @@ def create_venue_submission():
         finally:
             db.session.close()
     else:
-        flash('An error occurred. Venue form validation failed.')
-        for field, errors in form.errors.items():
-            for error in errors:
-                print(f"Error in {getattr(form, field).label.text}: {error}")
-        return render_template('forms/new_venue.html', form=form)
+        print("Form errors:", form.errors)
+        flash("Venue form validation failed. Please check the errors and try again.")
+    return render_template('forms/new_venue.html', form=form)
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -509,7 +507,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-    # TODO: take values from the form submitted, and update existing
+    # TODO: take values from the form submitted, and update existing - DONE
     # venue record with ID <venue_id> using the new attributes
     venue = Venue.query.get(venue_id)
     form = VenueForm(request.form)
@@ -554,22 +552,48 @@ def edit_venue_submission(venue_id):
 
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
-  form = ArtistForm()
-  return render_template('forms/new_artist.html', form=form)
+    form = ArtistForm()
+    return render_template('forms/new_artist.html', form=form)
 
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
-
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-  return render_template('pages/home.html')
-
+    # called upon submitting the new artist listing form
+    # TODO: insert form data as a new Venue record in the db, instead
+    form = ArtistForm(request.form)
+    if form.validate_on_submit():
+        try:
+            new_artist = Artist(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                phone=form.phone.data,
+                image_link=form.image_link.data,
+                facebook_link=form.facebook_link.data,
+                website=form.website.data,
+                seeking_venue=form.seeking_venue.data,
+                seeking_description=form.seeking_description.data,
+                genres=form.genres.data
+            )
+            db.session.add(new_artist)
+            db.session.commit()
+            # TODO: modify data to be the data object returned from db insertion
+            # on successful db insert, flash success
+            flash('Artist ' + form.name.data + ' was successfully listed!')
+            # TODO: on unsuccessful db insert, flash an error instead.
+            # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Artist ' + form.name.data + ' could not \
+                  be listed.')
+            print(f'Error: {e}')
+            
+        finally:
+            db.session.close()
+    else:
+        print("Form errors:", form.errors)
+        flash("Artist form validation failed. Please check the errors and try again.")
+    return render_template('forms/new_artist.html', form=form)
 
 #  Shows
 #  ----------------------------------------------------------------
