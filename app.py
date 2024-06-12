@@ -134,7 +134,8 @@ def venues():
     # TODO: replace with real venues data.
     # num_upcoming_shows should be aggregated based on number of upcoming
     # shows per venue. - DONE
-    
+    form = SearchForm()
+
     # Query db to get all venues
     venues = Venue.query.all()
     
@@ -159,7 +160,7 @@ def venues():
             "venues": venues_data
 				})
         
-    return render_template('pages/venues.html', areas=data)
+    return render_template('pages/venues.html', areas=data, form=form)
 
 
 @app.route('/venues/search', methods=['POST'])
@@ -169,6 +170,7 @@ def search_venues():
     # seach for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live
     # Music & Coffee" - DONE
+    form = SearchForm()
     search_term = request.form.get('search_term', '')
     search = "%{}".format(search_term)
     results = Venue.query.filter(Venue.name.ilike(search)).all()
@@ -189,7 +191,7 @@ def search_venues():
     }
     
     return render_template('pages/search_venues.html', results=response,
-                           search_term=search_term)
+                           search_term=search_term, form=form)
 
 
 @app.route('/venues/<int:venue_id>')
