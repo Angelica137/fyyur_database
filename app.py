@@ -451,30 +451,57 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
     artist = Artist.query.get(artist_id)
-    form = ArtistForm(
-        id=artist.id,
-        name=artist.name,
-        genres=artist.genres,
-        city=artist.city,
-        state=artist.state,
-        phone=artist.phone,
-        website=artist.website,
-        facebook_link=artist.facebook_link,
-        seeking_venue=artist.seeking_venue,
-        seeking_description=artist.seeking_description,
-        image_link=artist.image_link,
-        )
+    form = ArtistForm(obj=artist)
+    print(f'Editing artist: {artist.name}')
+    print(f'Current form data: {form.data}')
 
-    # TODO: populate form with fields from artist with ID <artist_id>
+    # TODO: populate form with fields from artist with ID <artist_id> - DONE
     return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
-  # artist record with ID <artist_id> using the new attributes
+    # TODO: take values from the form submitted, and update existing
+    # artist record with ID <artist_id> using the new attributes
+    artist = Artist.query.get(artist_id)
+    form = ArtistForm(request.form)
 
-  return redirect(url_for('show_artist', artist_id=artist_id))
+    print(f'Submitting form for artist: {artist.name}')
+    print(f'Form data: {form.data}')
+
+
+    if form.validate_on_submit():
+        try:
+            artist.name = form.name.data
+            artist.genres = form.genres.data
+            artist.city = form.city.data
+            artist.state = form.state.data
+            artist.phone = form.phone.data
+            artist.website = form.website.data
+            artist.facebook_link = form.facebook_link.data
+            artist.seeking_venue = form.seeking_venue.data
+            artist.seeking_description = form.seeking_description.data
+            artist.image_link = form.image_link.data
+
+            db.session.commit()
+            flash("Artist " + form.name.data + " was successfully updated.")
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Artist ' + form.name.data + ' could not \
+                  be updated.')
+            print(f'Error: {e}')
+            return render_template(
+                'forms/edit_artist.html',
+                form=form,
+                artist=artist
+            )
+        finally:
+            db.session.close()
+    else:
+        flash("Form validation failed. Please correct the errors and try again.")
+
+    return redirect(url_for('show_artist', artist_id=artist_id))
+
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
