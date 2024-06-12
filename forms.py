@@ -231,9 +231,16 @@ class ArtistForm(Form):
         'website_link'
      )
 
-    seeking_venue = BooleanField( 'seeking_venue' )
+    seeking_venue = BooleanField('seeking_venue')
 
     seeking_description = StringField(
             'seeking_description'
      )
 
+
+class CSRFForm(Form):
+    pass
+
+
+class SearchForm(Form):
+    search_term = StringField("search-term", validators=[DataRequired()])

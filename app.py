@@ -345,9 +345,10 @@ def delete_venue(venue_id):
 
 @app.route('/artists')
 def artists():
-    # TODO: replace with real data returned from querying the database
+    # TODO: replace with real data returned from querying the database - DONE
+    form = SearchForm()
     artists = Artist.query.all()
-    
+
     data = []
     for artist in artists:
         data.append({
@@ -355,29 +356,45 @@ def artists():
             "name": artist.name
         })
 
-    return render_template("pages/artists.html", artists=data)
-
+    return render_template("pages/artists.html", artists=data, form=form)
 
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-  # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+    # TODO: implement search on artists with partial string search. Ensure it
+    # is case-insensitive.
+    # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The
+    # Wild Sax Band".
+    # search for "band" should return "The Wild Sax Band".
+    form = SearchForm()
+    search_term = request.form.get("search_term", "")
+    search = "%{}".format(search_term)
+    results = Artist.query.filter(Artist.name.ilike(search)).all()
+
+    data = []
+    for artist in results:
+        num_upcoming_shows = Show.query.filter(
+            Show.artist_id == artist.id,
+            Show.start_time > datetime.now()).count()
+        data.append({
+            "id": artist.id,
+            "name": artist.name,
+            "num_upcoming_shows": num_upcoming_shows
+        })
+
+    response = {
+      "count": len(results),
+      "data": data
+      }
+
+    return render_template('pages/search_artists.html', results=response,
+                           search_term=search_term, form=form)
+
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-  # shows the artist page with the given artist_id
-  # TODO: replace with real artist data from the artist table, using artist_id
+    # shows the artist page with the given artist_id
+    # TODO: replace with real artist data from the artist table, using artist_id
 
   data1={
     "id": 4,

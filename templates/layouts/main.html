@@ -68,6 +68,7 @@
                 (request.endpoint == 'search_artists') or
                 (request.endpoint == 'show_artist') %}
               <form class="search" method="post" action="/artists/search">
+								{{ form.hidden_tag() }}
                 <input class="form-control"
                   type="search"
                   name="search_term"
