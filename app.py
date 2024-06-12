@@ -478,7 +478,7 @@ def edit_artist_submission(artist_id):
             artist.image_link = form.image_link.data
 
             db.session.commit()
-            flash("Artist " + form.name.data + " was successfully updated.")
+            flash("Artist update " + form.name.data + " was successfully updated.")
         except Exception as e:
             db.session.rollback()
             flash('An error occurred. Artist ' + form.name.data + ' could not \
@@ -492,7 +492,9 @@ def edit_artist_submission(artist_id):
         finally:
             db.session.close()
     else:
-        flash("Form validation failed. Please correct the errors and try again.")
+        flash(
+            "Form validation failed. Please correct the errors and try again."
+            )
 
     return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -504,11 +506,48 @@ def edit_venue(venue_id):
     # TODO: populate form with values from venue with ID <venue_id> - DONE
     return render_template('forms/edit_venue.html', form=form, venue=venue)
 
+
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing
-  # venue record with ID <venue_id> using the new attributes
-  return redirect(url_for('show_venue', venue_id=venue_id))
+    # TODO: take values from the form submitted, and update existing
+    # venue record with ID <venue_id> using the new attributes
+    venue = Venue.query.get(venue_id)
+    form = VenueForm(request.form)
+
+    if form.validate_on_submit():
+        try:
+            venue.name = form.name.data
+            venue.genres = form.genres.data
+            venue.city = form.city.data
+            venue.state = form.state.data
+            venue.phone = form.phone.data
+            venue.website = form.website.data
+            venue.facebook_link = form.facebook_link.data
+            venue.seeking_talent = form.seeking_talent.data
+            venue.seeking_description = form.seeking_description.data
+            venue.image_link = form.image_link.data
+
+            db.session.commit()
+            flash("Venue update " + form.name.data + " was successful")
+        except Exception as e:
+            db.session.rollback()
+            flash("AN error occured. " + form.name.data + "could not \
+                  be updated")
+            print(f"Error: {e}")
+            return render_template(
+                "forms/edit_artist.html",
+                form=form,
+                venue=venue
+            )
+        finally:
+            db.session.close()
+    else:
+        flash(
+            "Form validation failed. Please correct the errors and try again."
+            )
+
+    return redirect(url_for('show_venue', venue_id=venue_id))
+
 
 #  Create Artist
 #  ----------------------------------------------------------------
@@ -517,6 +556,7 @@ def edit_venue_submission(venue_id):
 def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
+
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
