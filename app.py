@@ -452,8 +452,6 @@ def show_artist(artist_id):
 def edit_artist(artist_id):
     artist = Artist.query.get(artist_id)
     form = ArtistForm(obj=artist)
-    print(f'Editing artist: {artist.name}')
-    print(f'Current form data: {form.data}')
 
     # TODO: populate form with fields from artist with ID <artist_id> - DONE
     return render_template('forms/edit_artist.html', form=form, artist=artist)
@@ -461,14 +459,10 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-    # TODO: take values from the form submitted, and update existing
+    # TODO: take values from the form submitted, and update existing - DONE
     # artist record with ID <artist_id> using the new attributes
     artist = Artist.query.get(artist_id)
     form = ArtistForm(request.form)
-
-    print(f'Submitting form for artist: {artist.name}')
-    print(f'Form data: {form.data}')
-
 
     if form.validate_on_submit():
         try:
@@ -505,23 +499,10 @@ def edit_artist_submission(artist_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
-  form = VenueForm()
-  venue={
-    "id": 1,
-    "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-    "address": "1015 Folsom Street",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
-    "facebook_link": "https://www.facebook.com/TheMusicalHop",
-    "seeking_talent": True,
-    "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-    "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
-  }
-  # TODO: populate form with values from venue with ID <venue_id>
-  return render_template('forms/edit_venue.html', form=form, venue=venue)
+    venue = Venue.query.get(venue_id)
+    form = VenueForm(obj=venue)
+    # TODO: populate form with values from venue with ID <venue_id> - DONE
+    return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
