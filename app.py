@@ -298,7 +298,7 @@ def create_venue_submission():
     else:
         print("Form errors:", form.errors)
         flash("Venue form validation failed. Please check the errors and try again.")
-    return render_template('forms/new_venue.html', form=form)
+    return render_template('pages/home.html', form=form)
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -399,17 +399,18 @@ def show_artist(artist_id):
     upcoming_shows = []
     current_time = datetime.now()
 
-    for show in artist.shows:
-        show_data = {
-            "venue_id": show.venue_id,
-            "venue_name": show.venue.name,
-            "venue_image_link": show.venue.image_link,
-            "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-    if show.start_time < current_time:
-        past_shows.append(show_data)
-    else:
-        upcoming_shows.append(show_data)
+    if artist.shows:
+        for show in artist.shows:
+            show_data = {
+                "venue_id": show.venue_id,
+                "venue_name": show.venue.name,
+                "venue_image_link": show.venue.image_link,
+                "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+        if show.start_time < current_time:
+            past_shows.append(show_data)
+        else:
+            upcoming_shows.append(show_data)
 
     data = {
         "id": artist.id,
@@ -576,7 +577,7 @@ def create_artist_submission():
             flash('An error occurred. Artist ' + form.name.data + ' could not \
                   be listed.')
             print(f'Error: {e}')
-            
+
         finally:
             db.session.close()
     else:
@@ -591,7 +592,7 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
     # displays list of shows at /shows
-    # TODO: replace with real venues data.
+    # TODO: replace with real venues data. - DONE
 
     shows = Show.query.all()
 
@@ -620,15 +621,38 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-  # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
+    # called to create new shows in the db, upon submitting new show listing
+    # form
+    # TODO: insert form data as a new Show record in the db, instead
 
-  # on successful db insert, flash success
-  flash('Show was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Show could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+    form = ShowForm(request.form)
+    if form.validate_on_submit():
+        try:
+            new_show = Show(
+                artist_id=form.artist_id.data,
+                venue_id=form.venue_id.data,
+                start_time=form.start_time.data,
+            )
+            db.session.add(new_show)
+            db.session.commit()
+            # on successful db insert, flash success
+            flash('Show was successfully listed!')
+    # TODO: on unsuccessful db insert, flash an error instead.
+    # e.g., flash('An error occurred. Show could not be listed.')
+    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+        except Exception as e:
+            db.session.rollback()
+            flash("An error occured. Show " + form.show.data + " could not \
+              be listed.")
+            print(f"Error: {e}")
+        finally:
+            db.session.close()
+    else:
+        print("Form errors: ", form.errors)
+        flash("Show form validation failed. Please check the errors and try \
+              again.")
+    return render_template('forms/new_show.html', form=form)
+
 
 @app.errorhandler(404)
 def not_found_error(error):
