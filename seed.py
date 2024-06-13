@@ -29,7 +29,7 @@ def seed_data():
                 "facebook_link": "https://facebook.com/venue2",
                 "website": "https://www.parksquarelivemusicandcoffee.com",
                 "seeking_talent": False,
-                "genres": ["Rock n Roll", "Jazz", "Classical", "Folk"]
+                "genres": ["RocknRoll", "Jazz", "Classical", "Folk"]
             },
             {
                 "name": "The Dueling Pianos Bar",
@@ -41,7 +41,7 @@ def seed_data():
                 "facebook_link": "https://facebook.com/venue3",
                 "website": "https://www.theduelingpianos.com",
                 "seeking_talent": False,
-                "genres": ["Classical", "R&B", "Hip-Hop"]
+                "genres": ["Classical", "R_B", "HipHop"]
             }
         ]
 
@@ -69,7 +69,7 @@ def seed_data():
         artists_data = [
             {
                 "name": "Guns N Petals",
-                "genres": ["Rock n Roll"],
+                "genres": ["RocknRoll"],
                 "city": "San Francisco",
                 "state": "CA",
                 "phone": "326-123-5000",
@@ -159,6 +159,7 @@ def seed_data():
         db.session.commit()  # Commit shows
 
         print("Database seeded successfully!")
+
 
 if __name__ == "__main__":
     seed_data()
