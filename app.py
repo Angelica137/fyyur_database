@@ -623,7 +623,7 @@ def create_shows():
 def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing
     # form
-    # TODO: insert form data as a new Show record in the db, instead
+    # TODO: insert form data as a new Show record in the db, instead - DONE
 
     form = ShowForm(request.form)
     if form.validate_on_submit():
@@ -637,7 +637,7 @@ def create_show_submission():
             db.session.commit()
             # on successful db insert, flash success
             flash('Show was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
+    # TODO: on unsuccessful db insert, flash an error instead. - DONE
     # e.g., flash('An error occurred. Show could not be listed.')
     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         except Exception as e:
@@ -657,6 +657,7 @@ def create_show_submission():
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
+
 
 @app.errorhandler(500)
 def server_error(error):
