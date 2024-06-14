@@ -152,6 +152,8 @@ def show_venue(venue_id):
     if not venue:
         return render_template('errors/404.html'), 404
 
+    print("Retrieved genres: ", venue.genres)
+
     past_shows = db.session.query(Show).join(Artist).filter(
         Show.venue_id == venue_id, Show.start_time < datetime.now()).all()
     upcoming_shows = db.session.query(Show).join(Artist).filter(
@@ -184,11 +186,14 @@ def show_venue(venue_id):
         "seeking_talent": venue.seeking_talent,
         "seeking_description": venue.seeking_description,
         "image_link": venue.image_link,
-        "past_shows": past_shows,
-        "upcoming_shows": upcoming_shows,
+        "past_shows": past_shows_data,
+        "upcoming_shows": upcoming_shows_data,
         "past_shows_count": len(past_shows),
         "upcoming_shows_count": len(upcoming_shows)
     }
+
+    print(type(data["genres"]))
+    print(data["genres"])
 
     return render_template('pages/show_venue.html', venue=data, form=form)
 
