@@ -152,8 +152,10 @@ def show_venue(venue_id):
     if not venue:
         return render_template('errors/404.html'), 404
 
-    past_shows = db.session.query(Show).join(Artist).filter(Show.venue_id == venue_id, Show.start_time < datetime.now()).all()
-    upcoming_shows = db.session.query(Show).join(Artist).filter(Show.venue_id == venue_id, Show.start_time >= datetime.now()).all()
+    past_shows = db.session.query(Show).join(Artist).filter(
+        Show.venue_id == venue_id, Show.start_time < datetime.now()).all()
+    upcoming_shows = db.session.query(Show).join(Artist).filter(
+        Show.venue_id == venue_id, Show.start_time >= datetime.now()).all()
 
     past_shows_data = [{
         'artist_id': show.artist_id,
@@ -341,8 +343,10 @@ def show_artist(artist_id):
     if not artist:
         return render_template("errors/404.html"), 404
 
-    past_shows = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id, Show.start_time < datetime.now()).all()
-    upcoming_shows = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id, Show.start_time >= datetime.now()).all()
+    past_shows = db.session.query(Show).join(Venue).filter(
+        Show.artist_id == artist_id, Show.start_time < datetime.now()).all()
+    upcoming_shows = db.session.query(Show).join(Venue).filter(
+        Show.artist_id == artist_id, Show.start_time >= datetime.now()).all()
 
     past_shows_data = [{
         'venue_id': show.venue_id,
@@ -357,7 +361,7 @@ def show_artist(artist_id):
         'venue_image_link': show.venue.image_link,
         'start_time': show.start_time.strftime('%Y-%m-%d %H:%M:%S')
     } for show in upcoming_shows]
-    
+
     data = {
         "id": artist.id,
         "name": artist.name,
@@ -542,7 +546,8 @@ def shows():
     # displays list of shows at /shows
     # TODO: replace with real venues data. - DONE
 
-    shows = db.session.query(Show).join(Venue, Show.venue_id == Venue.id).join(Artist, Show.artist_id == Artist.id).all()
+    shows = db.session.query(Show).join(Venue, Show.venue_id == Venue.id).join(
+        Artist, Show.artist_id == Artist.id).all()
 
     data = []
     for show in shows:
