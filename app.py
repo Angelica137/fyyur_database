@@ -123,8 +123,9 @@ def search_venues():
 
     data = []
     for venue in results:
-        num_upcoming_shows = Show.query.filter(Show.venue_id == venue.id,
-                                               Show.start_time > datetime.now()).count()
+        num_upcoming_shows = Show.query.filter(
+            Show.venue_id == venue.id,
+            Show.start_time > datetime.now()).count()
         data.append({
             "id": venue.id,
             "name": venue.name,
@@ -330,7 +331,8 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
     # shows the artist page with the given artist_id
-    # TODO: replace with real artist data from the artist table, using artist_id - DONE
+    # TODO: replace with real artist data from the artist table, using
+    # artist_id - DONE
     form = SearchForm()
 
     artist = Artist.query.get(artist_id)
@@ -515,7 +517,8 @@ def create_artist_submission():
             # on successful db insert, flash success - DONE
             flash('Artist ' + form.name.data + ' was successfully listed!')
             # TODO: on unsuccessful db insert, flash an error instead.
-            # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.') - DONE
+            # e.g., flash('An error occurred. Artist ' + data.name + ' could
+            # not be listed.') - DONE
         except Exception as e:
             db.session.rollback()
             flash('An error occurred. Artist ' + form.name.data + ' could not \
@@ -610,10 +613,8 @@ def server_error(error):
 
 if not app.debug:
     file_handler = FileHandler('error.log')
-    file_handler.setFormatter(
-        Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-    )
+    file_handler.setFormatter(Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     app.logger.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)

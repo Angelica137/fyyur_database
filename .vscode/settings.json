@@ -1,0 +1,5 @@
+{
+	"python.analysis.typeCheckingMode": "off",
+  "python.pythonPath": "${workspaceFolder}/venv/bin/python",
+  "flake8.interpreter": "${workspaceFolder}/venv/bin/python"
+}

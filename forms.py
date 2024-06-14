@@ -84,7 +84,11 @@ class StateEnum(Enum):
 class ShowForm(Form):
     artist_id = StringField('artist_id')
     venue_id = StringField('venue_id')
-    start_time = DateTimeField('start_time', validators=[DataRequired()], default=datetime.today())
+    start_time = DateTimeField(
+        'start_time',
+        validators=[
+            DataRequired()],
+        default=datetime.today())
 
 
 class VenueForm(Form):
@@ -94,15 +98,23 @@ class VenueForm(Form):
         'state',
         validators=[DataRequired()],
         choices=[(state.value, state.value) for state in StateEnum]
-        )
+    )
     address = StringField('address', validators=[DataRequired()])
-    phone = StringField('phone', validators=[DataRequired(), Regexp(r'^\d{3}-\d{3}-\d{4}$', message="Phone number must be in the format xxx-xxx-xxxx")])
+    phone = StringField(
+        'phone',
+        validators=[
+            DataRequired(),
+            Regexp(
+                r'^\d{3}-\d{3}-\d{4}$',
+                message="Phone number must be in the format xxx-xxx-xxxx")])
     image_link = StringField('image_link', validators=[Optional(), URL()])
     genres = SelectMultipleField(
         # TODO implement enum restriction - DONE
         'genres', validators=[DataRequired()],
         choices=[(genre.value, genre.value) for genre in GenreEnum])
-    facebook_link = StringField('facebook_link', validators=[Optional(), URL()])
+    facebook_link = StringField(
+        'facebook_link', validators=[
+            Optional(), URL()])
     website = StringField('website', validators=[Optional(), URL()])
     seeking_talent = BooleanField('seeking_talent')
     seeking_description = StringField('seeking_description')
@@ -115,7 +127,7 @@ class ArtistForm(Form):
         'state',
         validators=[DataRequired()],
         choices=[(state.value, state.value) for state in StateEnum]
-        )
+    )
     phone = StringField(
         # TODO implement validation logic for phone - DONE
         'phone', validators=[DataRequired(), Regexp(r'^\d{3}-\d{3}-\d{4}$', message="Phone number must be in the format xxx-xxx-xxxx.")]
@@ -126,9 +138,10 @@ class ArtistForm(Form):
         'genres', validators=[DataRequired()],
         choices=[(genre.value, genre.value) for genre in GenreEnum])
     facebook_link = StringField(
-        # TODO implement enum restriction - is this supposed to be here. CANNOT DO THIS
+        # TODO implement enum restriction - is this supposed to be here. CANNOT
+        # DO THIS
         'facebook_link', validators=[Optional(), URL()]
-                )
+    )
     website = StringField('website', validators=[Optional(), URL()])
     seeking_venue = BooleanField('seeking_venue')
     seeking_description = StringField('seeking_description')

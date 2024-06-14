@@ -5,45 +5,46 @@ from datetime import datetime
 def seed_data():
     with app.app_context():
         # Create sample venues
-        venues_data = [
-            {
-                "name": "The Musical Hop",
-                "city": "San Francisco",
-                "state": "CA",
-                "address": "1015 Folsom Street",
-                "phone": "123-123-1234",
-                "image_link": "https://example.com/image1.jpg",
-                "facebook_link": "https://facebook.com/venue1",
-                "website": "https://www.themusicalhop.com",
-                "seeking_talent": True,
-                "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-                "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"]
-            },
-            {
-                "name": "Park Square Live Music & Coffee",
-                "city": "San Francisco",
-                "state": "CA",
-                "address": "34 Whiskey Moore Ave",
-                "phone": "123-123-1234",
-                "image_link": "https://example.com/image2.jpg",
-                "facebook_link": "https://facebook.com/venue2",
-                "website": "https://www.parksquarelivemusicandcoffee.com",
-                "seeking_talent": False,
-                "genres": ["RocknRoll", "Jazz", "Classical", "Folk"]
-            },
-            {
-                "name": "The Dueling Pianos Bar",
-                "city": "New York",
-                "state": "NY",
-                "address": "335 Delancey Street",
-                "phone": "914-003-1132",
-                "image_link": "https://example.com/image3.jpg",
-                "facebook_link": "https://facebook.com/venue3",
-                "website": "https://www.theduelingpianos.com",
-                "seeking_talent": False,
-                "genres": ["Classical", "R_B", "HipHop"]
-            }
-        ]
+        venues_data = [{"name": "The Musical Hop",
+                        "city": "San Francisco",
+                        "state": "CA",
+                        "address": "1015 Folsom Street",
+                        "phone": "123-123-1234",
+                        "image_link": "https://example.com/image1.jpg",
+                        "facebook_link": "https://facebook.com/venue1",
+                        "website": "https://www.themusicalhop.com",
+                        "seeking_talent": True,
+                        "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
+                        "genres": ["Jazz",
+                                   "Reggae",
+                                   "Swing",
+                                   "Classical",
+                                   "Folk"]},
+                       {"name": "Park Square Live Music & Coffee",
+                        "city": "San Francisco",
+                        "state": "CA",
+                        "address": "34 Whiskey Moore Ave",
+                        "phone": "123-123-1234",
+                        "image_link": "https://example.com/image2.jpg",
+                        "facebook_link": "https://facebook.com/venue2",
+                        "website": "https://www.parksquarelivemusicandcoffee.com",
+                        "seeking_talent": False,
+                        "genres": ["RocknRoll",
+                                   "Jazz",
+                                   "Classical",
+                                   "Folk"]},
+                       {"name": "The Dueling Pianos Bar",
+                        "city": "New York",
+                        "state": "NY",
+                        "address": "335 Delancey Street",
+                        "phone": "914-003-1132",
+                        "image_link": "https://example.com/image3.jpg",
+                        "facebook_link": "https://facebook.com/venue3",
+                        "website": "https://www.theduelingpianos.com",
+                        "seeking_talent": False,
+                        "genres": ["Classical",
+                                   "R_B",
+                                   "HipHop"]}]
 
         venue_objs = []
         for venue_data in venues_data:
@@ -66,39 +67,32 @@ def seed_data():
         db.session.commit()  # Commit venues to generate their IDs
 
         # Create sample artists
-        artists_data = [
-            {
-                "name": "Guns N Petals",
-                "genres": ["RocknRoll"],
-                "city": "San Francisco",
-                "state": "CA",
-                "phone": "326-123-5000",
-                "website": "https://www.gunsnpetalsband.com",
-                "facebook_link": "https://www.facebook.com/GunsNPetals",
-                "seeking_venue": True,
-                "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-                "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-            },
-            {
-                "name": "Matt Quevedo",
-                "genres": ["Jazz"],
-                "city": "New York",
-                "state": "NY",
-                "phone": "300-400-5000",
-                "facebook_link": "https://www.facebook.com/mattquevedo923251523",
-                "seeking_venue": False,
-                "image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-            },
-            {
-                "name": "The Wild Sax Band",
-                "genres": ["Jazz", "Classical"],
-                "city": "San Francisco",
-                "state": "CA",
-                "phone": "432-325-5432",
-                "seeking_venue": False,
-                "image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80"
-            }
-        ]
+        artists_data = [{"name": "Guns N Petals",
+                         "genres": ["RocknRoll"],
+                         "city": "San Francisco",
+                         "state": "CA",
+                         "phone": "326-123-5000",
+                         "website": "https://www.gunsnpetalsband.com",
+                         "facebook_link": "https://www.facebook.com/GunsNPetals",
+                         "seeking_venue": True,
+                         "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+                         "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"},
+                        {"name": "Matt Quevedo",
+                         "genres": ["Jazz"],
+                         "city": "New York",
+                         "state": "NY",
+                         "phone": "300-400-5000",
+                         "facebook_link": "https://www.facebook.com/mattquevedo923251523",
+                         "seeking_venue": False,
+                         "image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"},
+                        {"name": "The Wild Sax Band",
+                         "genres": ["Jazz",
+                                    "Classical"],
+                         "city": "San Francisco",
+                         "state": "CA",
+                         "phone": "432-325-5432",
+                         "seeking_venue": False,
+                         "image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80"}]
 
         artist_objs = []
         for artist_data in artists_data:

@@ -7,6 +7,7 @@ from forms import *
 
 db = SQLAlchemy()
 
+
 class Venue(db.Model):
     # TODO: implement any missing fields, as a database migration using - DONE
     # Flask-Migrate
@@ -55,7 +56,10 @@ class Show(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     start_time = db.Column(db.DateTime, nullable=False)
 
-    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
+    artist_id = db.Column(
+        db.Integer,
+        db.ForeignKey('Artist.id'),
+        nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
 
 
