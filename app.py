@@ -1,27 +1,25 @@
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
+from models import db, Venue, Artist, Show
+from datetime import datetime
+from forms import *
+from hmac import compare_digest as safe_str_cmp
+from flask_wtf.csrf import CSRFProtect
+from flask_wtf import Form
+from logging import Formatter, FileHandler
+import os
+import logging
+from config import Config
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
+import babel
+import dateutil.parser
+import json
 import sys
 print(sys.path)
-
-import json
-import dateutil.parser
-import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from config import Config
-import logging
-import os
-from logging import Formatter, FileHandler
-from flask_wtf import Form
-from flask_wtf.csrf import CSRFProtect
-from hmac import compare_digest as safe_str_cmp
-from forms import *
-from datetime import datetime
-
-from models import db, Venue, Artist, Show
 
 
 #----------------------------------------------------------------------------#
@@ -106,8 +104,8 @@ def venues():
             "city": city,
             "state": state,
             "venues": venues_data
-				})
-        
+        })
+
     return render_template('pages/venues.html', areas=data, form=form)
 
 
@@ -122,7 +120,7 @@ def search_venues():
     search_term = request.form.get('search_term', '')
     search = "%{}".format(search_term)
     results = Venue.query.filter(Venue.name.ilike(search)).all()
-    
+
     data = []
     for venue in results:
         num_upcoming_shows = Show.query.filter(Show.venue_id == venue.id,
@@ -137,7 +135,7 @@ def search_venues():
         "count": len(results),
         "data": data
     }
-    
+
     return render_template('pages/search_venues.html', results=response,
                            search_term=search_term, form=form)
 
@@ -186,7 +184,7 @@ def show_venue(venue_id):
         "upcoming_shows": upcoming_shows,
         "past_shows_count": len(past_shows),
         "upcoming_shows_count": len(upcoming_shows)
-        }
+    }
 
     return render_template('pages/show_venue.html', venue=data, form=form)
 
@@ -225,10 +223,10 @@ def create_venue_submission():
             # insertion
             # on successful db insert, flash success
             flash('Venue ' + form.name.data + ' was successfully listed!')
-            
-						#return redirect(url_for('index')) - not sure I need to do this
-            
-						# TODO: on unsuccessful db insert, flash an error instead. - DONE
+
+            # return redirect(url_for('index')) - not sure I need to do this
+
+            # TODO: on unsuccessful db insert, flash an error instead. - DONE
             # e.g., flash('An error occurred. Venue ' + data.name + ' could
             # not be listed.')
             # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
@@ -318,15 +316,15 @@ def search_artists():
         })
 
     response = {
-      "count": len(results),
-      "data": data
-      }
+        "count": len(results),
+        "data": data
+    }
 
     return render_template(
         'pages/search_artists.html',
         results=response,
         search_term=search_term, form=form
-        )
+    )
 
 
 @app.route('/artists/<int:artist_id>')
@@ -373,7 +371,7 @@ def show_artist(artist_id):
         "upcoming_shows": upcoming_shows,
         "past_shows_count": len(past_shows),
         "upcoming_shows_count": len(upcoming_shows)
-        }
+    }
 
     return render_template('pages/show_artist.html', artist=data, form=form)
 
@@ -411,7 +409,8 @@ def edit_artist_submission(artist_id):
             artist.image_link = form.image_link.data
 
             db.session.commit()
-            flash("Artist update " + form.name.data + " was successfully updated.")
+            flash("Artist update " + form.name.data +
+                  " was successfully updated.")
         except Exception as e:
             db.session.rollback()
             flash('An error occurred. Artist ' + form.name.data + ' could not \
@@ -427,7 +426,7 @@ def edit_artist_submission(artist_id):
     else:
         flash(
             "Form validation failed. Please correct the errors and try again."
-            )
+        )
 
     return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -477,7 +476,7 @@ def edit_venue_submission(venue_id):
     else:
         flash(
             "Form validation failed. Please correct the errors and try again."
-            )
+        )
 
     return redirect(url_for('show_venue', venue_id=venue_id))
 
@@ -612,7 +611,8 @@ def server_error(error):
 if not app.debug:
     file_handler = FileHandler('error.log')
     file_handler.setFormatter(
-        Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+        Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
     )
     app.logger.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
