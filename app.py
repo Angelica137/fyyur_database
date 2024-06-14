@@ -152,21 +152,22 @@ def show_venue(venue_id):
     if not venue:
         return render_template('errors/404.html'), 404
 
-    past_shows = []
-    upcoming_shows = []
-    current_time = datetime.now()
+    past_shows = db.session.query(Show).join(Artist).filter(Show.venue_id == venue_id, Show.start_time < datetime.now()).all()
+    upcoming_shows = db.session.query(Show).join(Artist).filter(Show.venue_id == venue_id, Show.start_time >= datetime.now()).all()
 
-    for show in venue.shows:
-        show_data = {
-            "artist_id": show.artist_id,
-            "artist_name": show.artist.name,
-            "artist_image_link": show.artist.image_link,
-            "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-        if show.start_time < current_time:
-            past_shows.append(show_data)
-        else:
-            upcoming_shows.append(show_data)
+    past_shows_data = [{
+        'artist_id': show.artist_id,
+        'artist_name': show.artist.name,
+        'artist_image_link': show.artist.image_link,
+        'start_time': show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+    } for show in past_shows]
+
+    upcoming_shows_data = [{
+        'artist_id': show.artist_id,
+        'artist_name': show.artist.name,
+        'artist_image_link': show.artist.image_link,
+        'start_time': show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+    } for show in upcoming_shows]
 
     data = {
         "id": venue.id,
@@ -340,23 +341,23 @@ def show_artist(artist_id):
     if not artist:
         return render_template("errors/404.html"), 404
 
-    past_shows = []
-    upcoming_shows = []
-    current_time = datetime.now()
+    past_shows = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id, Show.start_time < datetime.now()).all()
+    upcoming_shows = db.session.query(Show).join(Venue).filter(Show.artist_id == artist_id, Show.start_time >= datetime.now()).all()
 
-    if artist.shows:
-        for show in artist.shows:
-            show_data = {
-                "venue_id": show.venue_id,
-                "venue_name": show.venue.name,
-                "venue_image_link": show.venue.image_link,
-                "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-        if show.start_time < current_time:
-            past_shows.append(show_data)
-        else:
-            upcoming_shows.append(show_data)
+    past_shows_data = [{
+        'venue_id': show.venue_id,
+        'venue_name': show.venue.name,
+        'venue_image_link': show.venue.image_link,
+        'start_time': show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+    } for show in past_shows]
 
+    upcoming_shows_data = [{
+        'venue_id': show.venue_id,
+        'venue_name': show.venue.name,
+        'venue_image_link': show.venue.image_link,
+        'start_time': show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+    } for show in upcoming_shows]
+    
     data = {
         "id": artist.id,
         "name": artist.name,
@@ -541,18 +542,16 @@ def shows():
     # displays list of shows at /shows
     # TODO: replace with real venues data. - DONE
 
-    shows = Show.query.all()
+    shows = db.session.query(Show).join(Venue, Show.venue_id == Venue.id).join(Artist, Show.artist_id == Artist.id).all()
 
     data = []
     for show in shows:
-        venue = Venue.query.get(show.venue_id)
-        artist = Artist.query.get(show.artist_id)
         data.append({
-            "venue_id": venue.id,
-            "venue_name": venue.name,
-            "artist_id": artist.id,
-            "artist_name": artist.name,
-            "artist_image_link": artist.image_link,
+            "venue_id": show.venue_id,
+            "venue_name": show.venue.name,
+            "artist_id": show.artist_id,
+            "artist_name": show.artist.name,
+            "artist_image_link": show.artist.image_link,
             "start_time": show.start_time.strftime("%Y-%m-%d %H:%M:%S")
         })
 
