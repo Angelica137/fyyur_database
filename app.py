@@ -33,12 +33,13 @@ app.config.from_object(Config)
 
 print("Initialise extensions")
 moment = Moment(app)
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 print("Extensions initialised")
 
 # Initialize CSRF protection
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app) -> I tried dev environment without it and I 
+#kept getting that no csrf token error
 
 # TODO: connect to a local postgresql database - DONE
 # this is in the config file?
@@ -379,8 +380,8 @@ def show_artist(artist_id):
         "seeking_venue": artist.seeking_venue,
         "seeking_description": artist.seeking_description,
         "image_link": artist.image_link,
-        "past_shows": past_shows,
-        "upcoming_shows": upcoming_shows,
+        "past_shows": past_shows_data,
+        "upcoming_shows": upcoming_shows_data,
         "past_shows_count": len(past_shows),
         "upcoming_shows_count": len(upcoming_shows)
     }
