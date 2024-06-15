@@ -38,8 +38,7 @@ migrate = Migrate(app, db)
 print("Extensions initialised")
 
 # Initialize CSRF protection
-# csrf = CSRFProtect(app) -> I tried dev environment without it and I 
-#kept getting that no csrf token error
+# csrf = CSRFProtect(app) 
 
 # TODO: connect to a local postgresql database - DONE
 # this is in the config file?
@@ -89,7 +88,7 @@ def venues():
     # create a set of unique city and state pairs
     cities = set()
     for venue in venues:
-        cities.add((venue.city, venue.state))
+        cities.add((venue.city, venue.state.value))
 
     # get data by city and state
     data = []
@@ -119,7 +118,7 @@ def search_venues():
     # Music & Coffee" - DONE
     form = SearchForm()
     search_term = request.form.get('search_term', '')
-    search = "%{}".format(search_term)
+    search = "%{}%".format(search_term)
     results = Venue.query.filter(Venue.name.ilike(search)).all()
 
     data = []
